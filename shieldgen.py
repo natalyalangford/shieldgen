@@ -67,14 +67,19 @@ def main() -> None:
 
     counter = 0
     logfiles = glob.glob('{}*'.format(args.source))
+    print(logfiles)
     for file in logfiles:
         with open(file) as fp:
             for line in fp.readline():
-                if re.search('{}.*pool.*all.deb.*200'.format(args.project), line):
+                if re.search(r'gpu-utils.*pool.*all.deb.*200'.format(args.project), line):
                     counter += 1
     shield_dict['message'] = str(counter)
-    with open(args.output, 'w') as fp:
-        json.dump(shield_dict, fp)
+    try:
+        with open(args.output, 'w') as fp:
+            print(args.output)
+            json.dump(shield_dict, fp)
+    except OSError as err:
+        print(err)
 
 
 if __name__ == '__main__':
