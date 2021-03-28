@@ -3,10 +3,10 @@ __author__ = 'Natalya Langford'
 __copyright__ = 'Copyright (C) 2021 Natalya Langford'
 __credits__ = ['Rick Langford - Testing, Debug, Verification, and Documentation']
 __license__ = 'GNU General Public License'
-__program_name__ = 'gpu-ls'
+__program_name__ = 'shieldgen'
 __maintainer__ = 'Natalya'
-__version__ = '0.0.1'
-__status__ = 'Development'
+__version__ = 'semantic version'
+__status__ = 'Development Status :: 3 - Alpha'
 __docformat__ = 'reStructuredText'
 # pylint: disable=multiple-statements
 # pylint: disable=line-too-long
@@ -23,17 +23,17 @@ import json
 
 def main() -> None:
     """
-    Main flow for gpu-ls.
+    Main flow for shieldgen .
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--about', help='README',
-                        action='store_true', default=False)
+                        type=str, default='')
     parser.add_argument('--source', help='Source of log file',
-                        action='store_true',default=False)
+                        type=str, default='')
     parser.add_argument('--project', help='Name of debian project',
-                        action='store_true',default=False)
+                        type=str, default='')
     parser.add_argument('--output', help='Shield json file',
-                        action='store_true',default=False)
+                        type=str, default='')
     args = parser.parse_args()
 
     shield_dict = {
@@ -65,13 +65,15 @@ def main() -> None:
         print('Path to output does not exist')
         sys.exit(-1)
 
+    searchpattern = re.compile(r'{}.*pool.*all.deb.*200'.format(args.project), re.IGNORECASE)
     counter = 0
+    print('{}*'.format(args.source))
     logfiles = glob.glob('{}*'.format(args.source))
-    print(logfiles)
     for file in logfiles:
         with open(file) as fp:
-            for line in fp.readline():
-                if re.search(r'gpu-utils.*pool.*all.deb.*200'.format(args.project), line):
+            for line in fp:
+                print(line)
+                if re.search(searchpattern, line):
                     counter += 1
     shield_dict['message'] = str(counter)
     try:
