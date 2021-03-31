@@ -29,9 +29,9 @@ def main() -> None:
     parser.add_argument('--about', help='README',
                         type=str, default='')
     parser.add_argument('--source', help='Source of log file',
-                        type=str, default='')
+                        type=str, default='', required=True)
     parser.add_argument('--project', help='Name of debian project',
-                        type=str, default='')
+                        type=str, default='', required=True)
     parser.add_argument('--output', help='Shield json file',
                         type=str, default='')
     args = parser.parse_args()
@@ -72,13 +72,11 @@ def main() -> None:
     for file in logfiles:
         with open(file) as fp:
             for line in fp:
-                print(line)
                 if re.search(searchpattern, line):
                     counter += 1
     shield_dict['message'] = str(counter)
     try:
         with open(args.output, 'w') as fp:
-            print(args.output)
             json.dump(shield_dict, fp)
     except OSError as err:
         print(err)
