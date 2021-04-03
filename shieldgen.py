@@ -5,7 +5,7 @@ __credits__ = ['Rick Langford - Testing, Debug, Verification, and Documentation'
 __license__ = 'GNU General Public License'
 __program_name__ = 'shieldgen'
 __maintainer__ = 'Natalya'
-__version__ = 'semantic version'
+__version__ = '0.0.2'
 __status__ = 'Development Status :: 3 - Alpha'
 __docformat__ = 'reStructuredText'
 # pylint: disable=multiple-statements
@@ -67,7 +67,6 @@ def main() -> None:
 
     searchpattern = re.compile(r'{}.*pool.*all.deb.*200'.format(args.project), re.IGNORECASE)
     counter = 0
-    print('{}*'.format(args.source))
     logfiles = glob.glob('{}*'.format(args.source))
     for file in logfiles:
         with open(file) as fp:
