@@ -34,6 +34,8 @@ def main() -> None:
                         type=str, default='', required=True)
     parser.add_argument('--output', help='Shield json file',
                         type=str, default='')
+    parser.add_argument('--debug', help='Activates logger',
+                        type=str, default = '')
     args = parser.parse_args()
 
     shield_dict = {
@@ -79,6 +81,8 @@ def main() -> None:
             json.dump(shield_dict, fp)
     except OSError as err:
         print(err)
+
+ #   if args.debug:
 
 
 if __name__ == '__main__':
