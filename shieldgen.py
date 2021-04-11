@@ -1,4 +1,21 @@
 #!/usr/bin/python3
+""" shieldgen - generate json badge content for rickslab.
+
+    Copyright (C) 2021  Natalya
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 __author__ = 'Natalya Langford'
 __copyright__ = 'Copyright (C) 2021 Natalya Langford'
 __credits__ = ['Rick Langford - Testing, Debug, Verification, and Documentation']
@@ -21,28 +38,48 @@ import glob
 import json
 
 
-def main() -> None:
+def deb_cnt_src(source: str, shield_dict: dict) -> bool:
+    """
+
+    :param source:
+    :param shield_dict:
+    :return:
+    """
+    searchpattern = re.compile(r'{}.*pool.*all.deb.*200'.format(shield_dict["project"]), re.IGNORECASE)
+    counter = 0
+    logfiles = glob.glob('{}*'.format(source))
+    for file in logfiles:
+        with open(file) as fp:
+            for line in fp:
+                if re.search(searchpattern, line):
+                    counter += 1
+    shield_dict['message'] = str(counter)
+    return True
+
+
+def main():
     """
     Main flow for shieldgen .
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--about', help='README',
                         type=str, default='')
-    parser.add_argument('--source', help='Source of log file',
+    parser.add_argument('--deb_cnt_src', help='Source of log file',
                         type=str, default='', required=True)
     parser.add_argument('--project', help='Name of debian project',
                         type=str, default='', required=True)
     parser.add_argument('--output', help='Shield json file',
                         type=str, default='')
     parser.add_argument('--debug', help='Activates logger',
-                        type=str, default = '')
+                        type=bool, default=False)
     args = parser.parse_args()
 
     shield_dict = {
         "schemaVersion": 1,
         "label": "rickslab.com downloads",
         "message": "",
-        "color": "orange"
+        "color": "orange",
+        "project": args.project
     }
 
     # About me
@@ -57,32 +94,24 @@ def main() -> None:
         print('Status: ', __status__)
         sys.exit(0)
 
-    if args.source:
-        if not os.path.isfile(args.source):
+    if args.deb_cnt_src:
+        if not os.path.isfile(args.deb_cnt_src):
             print('Incorrect log file')
             sys.exit(-1)
+        deb_cnt_src(args.deb_cnt_src, shield_dict)
 
-    outpath = pathlib.Path(__file__).parent.absolute()
-    if not os.path.isdir(outpath):
-        print('Path to output does not exist')
-        sys.exit(-1)
-
-    searchpattern = re.compile(r'{}.*pool.*all.deb.*200'.format(args.project), re.IGNORECASE)
-    counter = 0
-    logfiles = glob.glob('{}*'.format(args.source))
-    for file in logfiles:
-        with open(file) as fp:
-            for line in fp:
-                if re.search(searchpattern, line):
-                    counter += 1
-    shield_dict['message'] = str(counter)
-    try:
-        with open(args.output, 'w') as fp:
-            json.dump(shield_dict, fp)
-    except OSError as err:
-        print(err)
-
- #   if args.debug:
+    if not args.output:
+        print(args.output)
+    else:
+        outpath = pathlib.Path(__file__).parent.absolute()
+        if not os.path.isdir(outpath):
+            print('Path to output does not exist')
+            sys.exit(-1)
+        try:
+            with open(args.output, 'w') as fp:
+                json.dump(shield_dict, fp)
+        except OSError as err:
+            print(err)
 
 
 if __name__ == '__main__':
