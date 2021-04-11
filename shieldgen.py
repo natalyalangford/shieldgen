@@ -109,7 +109,7 @@ def main():
             sys.exit(-1)
         try:
             with open(args.output, 'w') as fp:
-                json_dict = {k: shield_dict[k] ct.items() for k in ["shemaVersion", "label", "message", "color"]}
+                json_dict = {k: shield_dict[k] for k in ["schemaVersion", "label", "message", "color"]}
                 json.dump(json_dict, fp)
         except OSError as err:
             print(err)
