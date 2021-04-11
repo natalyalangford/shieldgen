@@ -101,7 +101,7 @@ def main():
         deb_cnt_src(args.deb_cnt_src, shield_dict)
 
     if not args.output:
-        print(args.output)
+        print(shield_dict)
     else:
         outpath = pathlib.Path(__file__).parent.absolute()
         if not os.path.isdir(outpath):
