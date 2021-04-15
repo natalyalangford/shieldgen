@@ -27,7 +27,7 @@ __status__ = 'Development Status :: 3 - Alpha'
 __docformat__ = 'reStructuredText'
 # pylint: disable=multiple-statements
 # pylint: disable=line-too-long
-# pylint: disable=bad-continuation
+# pylint: disable=bad-continuation3
 
 import os
 import pathlib
@@ -38,15 +38,15 @@ import glob
 import json
 
 
-def deb_cnt_src(source: str, shield_dict: dict) -> bool:
+def deb_cnt_src(source: str, shield_dict: dict, counter) -> bool:
     """
 
+    :param counter:
     :param source:
     :param shield_dict:
     :return:
     """
     searchpattern = re.compile(r'{}.*pool.*all.deb.*200'.format(shield_dict["project"]), re.IGNORECASE)
-    counter = 0
     logfiles = glob.glob('{}*'.format(source))
     for file in logfiles:
         with open(file) as fp:
@@ -70,6 +70,8 @@ def main():
                         type=str, default='', required=True)
     parser.add_argument('--output', help='Shield json file',
                         type=str, default='')
+    parser.add_argument('--counter', help='Option to start counter at any number',
+                        type=int, default = 0)
     parser.add_argument('--debug', help='Activates logger',
                         type=bool, default=False)
     args = parser.parse_args()
@@ -98,7 +100,7 @@ def main():
         if not os.path.isfile(args.deb_cnt_src):
             print('Incorrect log file')
             sys.exit(-1)
-        deb_cnt_src(args.deb_cnt_src, shield_dict)
+        deb_cnt_src(args.deb_cnt_src, shield_dict, args.counter)
 
     if not args.output:
         print(shield_dict)
